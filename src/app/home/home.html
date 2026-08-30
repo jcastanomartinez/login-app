@@ -1,0 +1,67 @@
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="logo">📊 FactuApp</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-item active">Dashboard</a>
+      <a class="nav-item">Facturas</a>
+      <a class="nav-item">Clientes</a>
+      <a class="nav-item">Ajustes</a>
+    </nav>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <h1>Dashboard</h1>
+      <div class="user-menu">
+        <span>Hola, Jesús</span>
+        <button class="logout-btn" (click)="cerrarSesion()">Cerrar sesión</button>
+      </div>
+    </header>
+
+    <section class="content">
+      <div class="metrics">
+        <div class="metric-card">
+          <span class="metric-label">Facturas pendientes</span>
+          <span class="metric-value">12</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Ingresos del mes</span>
+          <span class="metric-value">8.450 €</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Clientes activos</span>
+          <span class="metric-value">34</span>
+        </div>
+      </div>
+
+      <div class="invoices-table">
+        <h2>Últimas facturas</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Nº Factura</th>
+              <th>Cliente</th>
+              <th>Fecha</th>
+              <th>Importe</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of facturas(); track item.id) {
+                 <!-- contenido repetido para cada "item" -->
+                  <tr>
+                    <td>{{item.num_factura}}</td>
+                    <td>{{item.cliente}}</td>
+                    <td>{{item.fecha_factura}}</td>
+                    <td>{{item.importe}}</td>
+                    <td><span class="badge paid">{{item.estado}}</span></td>
+                  </tr>
+}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>

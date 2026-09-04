@@ -1,0 +1,97 @@
+.register-card {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 600px;   /* antes 460px */
+  margin: 2rem auto;
+}
+
+.register-card h1 {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.5rem;
+  color: #1e1b2e;
+  text-align: center;
+}
+
+.field-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.field-row .field {
+  flex: 1;
+}
+
+.field {
+  margin-bottom: 1.2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.field label {
+  font-size: 0.85rem;
+  color: #4b5563;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.field input {
+  padding: 0.7rem 0.9rem;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: #7c3aed;
+}
+
+.field input.error {
+  border-color: #dc2626;
+}
+
+.error-text {
+  color: #dc2626;
+  font-size: 0.8rem;
+  margin: 0.3rem 0 0 0;
+}
+
+button[type="submit"] {
+  display: block;
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+button[type="submit"]:hover {
+  opacity: 0.9;
+}
+
+.switch-link {
+  text-align: center;
+  margin-top: 1.2rem;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.switch-link a {
+  color: #7c3aed;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.switch-link a:hover {
+  text-decoration: underline;
+}

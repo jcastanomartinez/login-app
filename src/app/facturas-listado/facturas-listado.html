@@ -1,0 +1,32 @@
+<div class="page-header">
+  <h1>Facturas</h1>
+</div>
+
+<div class="invoices-table">
+  <table>
+    <thead>
+      <tr>
+        <th>Nº Factura</th>
+        <th>Cliente</th>
+        <th>Fecha</th>
+        <th>Importe</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (factura of facturas(); track factura.id) {
+        <tr (dblclick)="verDetalle(factura.id)" class="fila-clicable">
+          <td>{{ factura.num_factura }}</td>
+          <td>{{ factura.cliente }}</td>
+          <td>{{ factura.fecha_factura | date:'dd/MM/yyyy' }}</td>
+          <td>{{ factura.importe }} €</td>
+          <td>
+            <span class="badge" [class.paid]="factura.estado === 'Pagada'" [class.pending]="factura.estado === 'Pendiente'">
+              {{ factura.estado }}
+            </span>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

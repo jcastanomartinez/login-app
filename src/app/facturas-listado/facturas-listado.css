@@ -1,0 +1,69 @@
+.page-header {
+  margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+  font-size: 1.5rem;
+  color: #1e1b2e;
+  margin: 0;
+}
+
+.invoices-table {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.invoices-table h2 {
+  font-size: 1.1rem;
+  margin: 0 0 1rem 0;
+  color: #1e1b2e;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  text-align: left;
+  font-size: 0.8rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  padding: 0.7rem;
+  border-bottom: 2px solid #f0f0f2;
+}
+
+td {
+  padding: 0.9rem 0.7rem;
+  border-bottom: 1px solid #f0f0f2;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.fila-clicable {
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.fila-clicable:hover {
+  background: #f9fafb;
+}
+
+.badge {
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge.paid {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.badge.pending {
+  background: #fef3c7;
+  color: #d97706;
+}

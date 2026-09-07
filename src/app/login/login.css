@@ -7,6 +7,15 @@
   max-width: 380px;
 }
 
+/* login.css */
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #a855f7 100%);
+}
+
 .login-card h1 {
   margin: 0 0 1.5rem 0;
   font-size: 1.5rem;

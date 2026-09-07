@@ -1,27 +1,40 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { Auth } from '../services/auth';
-import { FacturaService } from '../services/facturaService';
-import { Factura } from '../models/Factura';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
+import { FacturaService } from '../services/facturaService'
+import { Factura } from '../models/Factura';
+import { DecimalPipe,DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-home',
-  imports: [],
+  standalone: true,
+  imports: [DecimalPipe,DatePipe],
   templateUrl: './home.html',
-  styleUrl: './home.css',
+  styleUrl: './home.css'
 })
 export class Home implements OnInit {
   facturas = signal<Factura[]>([]);
-  menuAbierto = false; // o signal(false), como prefieras
 
+  facturasPendientes = computed(() =>
+    this.facturas().filter(f => f.estado === 'Pendiente').length
+  );
 
-  constructor(private authService: Auth, private router: Router, private facturaService: FacturaService) { }
+  ingresosDelMes = computed(() => {
+    const ahora = new Date();
+    return this.facturas()
+      .filter(f => {
+        const fecha = new Date(f.fecha_factura);
+        return f.estado === 'Pagada'
+          && fecha.getMonth() === ahora.getMonth()
+          && fecha.getFullYear() === ahora.getFullYear();
+      })
+      .reduce((total, f) => total + f.importe, 0);
+  });
 
+  clientesActivos = computed(() =>
+    new Set(this.facturas().map(f => f.cliente)).size
+  );
 
-
-  toggleMenu() {
-    this.menuAbierto = !this.menuAbierto;
-  }
+  constructor(private router: Router, private facturaService: FacturaService) { }
 
   ngOnInit(): void {
     this.facturaService.getFacturas().subscribe({
@@ -29,9 +42,8 @@ export class Home implements OnInit {
       error: (err) => console.log('ERROR:', err)
     });
   }
-  public cerrarSesion() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
 
+  irADetalle(id: number) {
+    this.router.navigate(['/facturas', id]);
+  }
 }

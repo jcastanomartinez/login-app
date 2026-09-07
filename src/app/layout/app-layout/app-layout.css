@@ -1,0 +1,140 @@
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-area {
+  flex: 1;
+  background: #f4f5f9;
+  overflow-y: auto;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.topbar-user {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.btn-logout {
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  background: transparent;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-logout:hover {
+  background: #fef2f2;
+}
+
+/* Contenedor relativo: ancla el dropdown al botón */
+.menu-wrapper {
+  position: relative;
+}
+
+.hamburger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+
+.hamburger:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.hamburger.active {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+
+.chevron {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  color: #6b7280;
+  transition: transform 0.2s ease;
+}
+
+.chevron.rotated {
+  transform: rotate(180deg);
+}
+
+.logo-icon {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  display: block;
+}
+
+.logo-text {
+  font-weight: 700;
+  color: #333;
+  font-size: 1rem;
+}
+/* Menú flotante, alineado a la izquierda del botón */
+.sidebar-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 0;
+  width: 220px;
+  background: linear-gradient(180deg, #6d5df0, #7c3aed);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  z-index: 1000;
+  animation: dropdownIn 0.2s ease;
+}
+
+@keyframes dropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+}
+
+.nav-item {
+  padding: 12px 20px;
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nav-item.active,
+.nav-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+/* Overlay invisible para cerrar al hacer click fuera */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  z-index: 999;
+}

@@ -1,0 +1,38 @@
+<div class="app-shell">
+    <div class="main-area">
+        <header class="topbar">
+            <div class="menu-wrapper">
+                <button class="hamburger" [class.active]="menuAbierto()" (click)="toggleMenu()" aria-label="Abrir menú">
+                    <img src="images/iconoFactApp.jpg" alt="FactuApp" class="logo-icon">
+                    <svg class="chevron" [class.rotated]="menuAbierto()" width="12" height="12" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
+
+                @if (menuAbierto()) {
+                <aside class="sidebar-dropdown">
+                    <nav class="sidebar-nav">
+                        <a class="nav-item" routerLink="/home" routerLinkActive="active"
+                            (click)="cerrarMenu()">Dashboard</a>
+                        <a class="nav-item" routerLink="/facturas" routerLinkActive="active"
+                            (click)="cerrarMenu()">Facturas</a>
+                        <a class="nav-item" (click)="cerrarMenu()">Clientes</a>
+                        <a class="nav-item" (click)="cerrarMenu()">Ajustes</a>
+                    </nav>
+                </aside>
+                }
+            </div>
+
+            <div class="topbar-user">
+                <span>Hola, {{ nombreUsuario() }}</span>
+                <button class="btn-logout" (click)="cerrarSesion()">Cerrar sesión</button>
+            </div>
+        </header>
+        <router-outlet></router-outlet>
+    </div>
+
+    @if (menuAbierto()) {
+    <div class="overlay" (click)="cerrarMenu()"></div>
+    }
+</div>

@@ -1,13 +1,9 @@
+/* styles.css — deja SOLO esto */
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   font-family: 'Segoe UI', system-ui, sans-serif;
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #a855f7 100%);
 }

@@ -1,0 +1,67 @@
+.detalle-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.8rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.detalle-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.detalle-table th {
+  text-align: left;
+  font-size: 0.8rem;
+  color: #374151;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.7rem 1rem;
+  background: #f4f5f7;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.detalle-table td {
+  padding: 0.9rem 1rem;
+  font-size: 0.95rem;
+  color: #1e1b2e;
+  font-weight: 500;
+  cursor: pointer;          /* Cursor de mano para indicar que es interactivo */
+  user-select: none;       /* Evita seleccionar el texto azul al hacer doble clic */
+}
+
+/* Estilo para los campos de entrada al editar */
+.input-edit {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  font-size: 0.9rem;
+  border: 1px solid #3b82f6;
+  border-radius: 6px;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.acciones-footer {
+  display: flex;  
+  justify-content: center; 
+  max-width: 100%;           
+  margin: 1.2rem auto 5rem auto; 
+  padding-left: 15px;          
+}
+
+.btn-volver {
+  font-size: 32px; 
+  width: 50px;     
+  height: 50px;    
+  display: inline-flex;
+  justify-content: center; 
+  align-items: center;     
+  line-height: 1;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}

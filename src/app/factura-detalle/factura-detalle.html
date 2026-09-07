@@ -1,0 +1,98 @@
+@if (cargando()) {
+<p>Cargando...</p>
+} @else if (error()) {
+<p>No se pudo cargar la factura.</p>
+} @else if (factura(); as f) {
+
+<div class="detalle-header">
+  <h1>Factura {{ f.num_factura }}</h1>
+</div>
+
+<div class="detalle-card">
+  <table class="detalle-table">
+    <thead>
+      <tr>
+        <th>Cliente</th>
+        <th>Fecha</th>
+        <th>Importe</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <!-- Cliente -->
+        <td (dblclick)="activarEdicion('cliente')">
+          @if (campoEditando() === 'cliente') {
+            <input 
+              type="text" 
+              [(ngModel)]="f.cliente" 
+              (blur)="guardarEdicion()" 
+              (keyup.enter)="guardarEdicion()" 
+              autofocus 
+              class="input-edit"
+            />
+          } @else {
+            <span>{{ f.cliente }}</span>
+          }
+        </td>
+
+        <!-- Fecha -->
+        <td (dblclick)="activarEdicion('fecha')">
+          @if (campoEditando() === 'fecha') {
+            <input 
+              type="date" 
+              [(ngModel)]="f.fecha_factura" 
+              (blur)="guardarEdicion()" 
+              (keyup.enter)="guardarEdicion()" 
+              autofocus 
+              class="input-edit"
+            />
+          } @else {
+            <span>{{ f.fecha_factura | date:'dd/MM/yyyy' }}</span>
+          }
+        </td>
+
+        <!-- Importe -->
+        <td (dblclick)="activarEdicion('importe')">
+          @if (campoEditando() === 'importe') {
+            <input 
+              type="number" 
+              [(ngModel)]="f.importe" 
+              (blur)="guardarEdicion()" 
+              (keyup.enter)="guardarEdicion()" 
+              autofocus 
+              class="input-edit"
+            />
+          } @else {
+            <span>{{ f.importe }} €</span>
+          }
+        </td>
+
+        <!-- Estado -->
+        <td (dblclick)="activarEdicion('estado')">
+          @if (campoEditando() === 'estado') {
+            <select 
+              [(ngModel)]="f.estado" 
+              (blur)="guardarEdicion()" 
+              (change)="guardarEdicion()" 
+              autofocus 
+              class="input-edit"
+            >
+              <option value="Pagada">Pagada</option>
+              <option value="Pendiente">Pendiente</option>
+            </select>
+          } @else {
+            <span class="badge" [class.paid]="f.estado === 'Pagada'" [class.pending]="f.estado === 'Pendiente'">
+              {{ f.estado }}
+            </span>
+          }
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="acciones-footer">
+  <button class="btn-volver" (click)="volver()">←</button>
+</div>
+}

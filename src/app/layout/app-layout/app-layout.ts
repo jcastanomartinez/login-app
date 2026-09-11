@@ -14,7 +14,7 @@ export class AppLayout implements OnInit {
 
   constructor(private authService: Auth, private router: Router) {}
 
-  menuAbierto = signal(true); // en desktop probablemente quieras que arranque abierto
+  menuAbierto = signal(false); // en desktop probablemente quieras que arranque abierto
 
   toggleMenu() {
     this.menuAbierto.update(v => !v);

@@ -1,8 +1,8 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { FacturaService, FacturaDraft } from '../services/facturaService';
-import { Factura } from '../models/Factura';
+import { FacturaService } from '../services/facturaService';
+import { Factura, FacturaDraft, FacturaItem } from '../models/Factura';
 
 @Component({
   selector: 'app-facturas-listado',
@@ -15,21 +15,17 @@ export class FacturasListado implements OnInit {
   facturas = signal<Factura[]>([]);
   estados: string[] = ['Pagada', 'Pendiente', 'Vencida'];
 
-  // --- Edición de fila completa ---
   editingId = signal<number | null>(null);
   editBuffer = signal<Factura | null>(null);
   savingEdit = signal(false);
 
-  // --- Modal de creación ---
   showAddModal = signal(false);
   newFactura = signal<FacturaDraft>(this.emptyDraft());
   savingNew = signal(false);
 
-  // --- Modal de eliminación ---
   facturaToDelete = signal<Factura | null>(null);
   deleting = signal(false);
-
-  // --- Mensaje de error genérico para mostrar en la UI ---
+  downloadingPdfId = signal<number | null>(null);
   errorMsg = signal<string | null>(null);
 
   constructor(private facturaService: FacturaService) {}
@@ -41,15 +37,29 @@ export class FacturasListado implements OnInit {
   private cargarFacturas(): void {
     this.facturaService.getFacturas().subscribe({
       next: (data) => this.facturas.set(data),
-      error: (err) => console.error('Error al cargar facturas:', err)
+      error: (err) => {
+        console.error('Error al cargar facturas:', err);
+        this.errorMsg.set('No se han podido cargar las facturas.');
+      }
     });
   }
 
   private emptyDraft(): FacturaDraft {
-    return { num_factura: '', cliente: '', fecha_factura: '', importe: 0, estado: 'Pendiente' };
+    return {
+      invoiceNumber: '',
+      invoiceDate: new Date().toISOString().substring(0, 10),
+      companyName: '',
+      companyTaxId: '',
+      companyAddress: '',
+      companyEmail: '',
+      customerName: '',
+      customerTaxId: '',
+      customerAddress: '',
+      estado: 'Pendiente',
+      items: [{ description: '', quantity: 1, unitPrice: 0, tax: 21 }]
+    };
   }
 
-  // ================== AÑADIR ==================
   openAddModal(): void {
     this.newFactura.set(this.emptyDraft());
     this.errorMsg.set(null);
@@ -57,13 +67,47 @@ export class FacturasListado implements OnInit {
   }
 
   closeAddModal(): void {
-    this.showAddModal.set(false);
+    if (!this.savingNew()) this.showAddModal.set(false);
+  }
+
+  updateNewField<K extends keyof FacturaDraft>(field: K, value: FacturaDraft[K]): void {
+    this.newFactura.set({ ...this.newFactura(), [field]: value });
+  }
+
+  addItem(): void {
+    const factura = this.newFactura();
+    this.newFactura.set({
+      ...factura,
+      items: [...factura.items, { description: '', quantity: 1, unitPrice: 0, tax: 21 }]
+    });
+  }
+
+  removeItem(index: number): void {
+    const factura = this.newFactura();
+    if (factura.items.length <= 1) return;
+    this.newFactura.set({ ...factura, items: factura.items.filter((_, i) => i !== index) });
+  }
+
+  updateNewItem(index: number, field: keyof FacturaItem, value: string | number): void {
+    const factura = this.newFactura();
+    const items = factura.items.map((item, i) =>
+      i === index ? { ...item, [field]: value } : item
+    );
+    this.newFactura.set({ ...factura, items });
   }
 
   confirmAdd(): void {
     const draft = this.newFactura();
-    if (!draft.num_factura.trim() || !draft.cliente.trim()) {
+    if (!draft.invoiceNumber.trim() || !draft.customerName.trim()) {
       this.errorMsg.set('Nº de factura y cliente son obligatorios.');
+      return;
+    }
+    if (!draft.invoiceDate) {
+      this.errorMsg.set('La fecha de factura es obligatoria.');
+      return;
+    }
+    if (draft.items.some(item => !item.description.trim() || item.quantity <= 0 || item.unitPrice < 0)) {
+      this.errorMsg.set('Revisa las líneas: descripción, cantidad y precio son obligatorios.');
       return;
     }
 
@@ -76,16 +120,15 @@ export class FacturasListado implements OnInit {
       },
       error: (err) => {
         console.error('Error al crear factura:', err);
-        this.errorMsg.set('No se ha podido crear la factura.');
+        this.errorMsg.set(err?.error?.error || 'No se ha podido crear la factura.');
         this.savingNew.set(false);
       }
     });
   }
 
-  // ================== EDITAR (fila completa) ==================
   startEdit(factura: Factura): void {
     this.editingId.set(factura.id);
-    this.editBuffer.set({ ...factura });
+    this.editBuffer.set({ ...factura, items: factura.items.map(item => ({ ...item })) });
     this.errorMsg.set(null);
   }
 
@@ -101,18 +144,14 @@ export class FacturasListado implements OnInit {
     this.savingEdit.set(true);
     this.facturaService.actualizarFactura(buffer).subscribe({
       next: (actualizada) => {
-        this.facturas.update(list =>
-          list.map(f => (f.id === actualizada.id ? actualizada : f))
-        );
+        this.facturas.update(list => list.map(f => f.id === actualizada.id ? actualizada : f));
         this.savingEdit.set(false);
-        this.editingId.set(null);
-        this.editBuffer.set(null);
+        this.cancelEdit();
       },
       error: (err) => {
         console.error('Error al actualizar factura:', err);
-        this.errorMsg.set('No se ha podido guardar el cambio.');
+        this.errorMsg.set(err?.error?.error || 'No se ha podido guardar el cambio.');
         this.savingEdit.set(false);
-        // el buffer se mantiene visible para que el usuario pueda reintentar
       }
     });
   }
@@ -123,14 +162,11 @@ export class FacturasListado implements OnInit {
     this.editBuffer.set({ ...buffer, [field]: value });
   }
 
-  // Convierte cualquier fecha almacenada (ISO completo o yyyy-MM-dd) al formato
-  // que exige <input type="date">. No usa new Date() para evitar desfases de zona horaria.
   dateForInput(fecha: string | null | undefined): string {
     if (!fecha) return '';
     return fecha.substring(0, 10);
   }
 
-  // ================== ELIMINAR ==================
   askDelete(factura: Factura): void {
     this.facturaToDelete.set(factura);
     this.errorMsg.set(null);
@@ -153,13 +189,32 @@ export class FacturasListado implements OnInit {
       },
       error: (err) => {
         console.error('Error al eliminar factura:', err);
-        this.errorMsg.set('No se ha podido eliminar la factura.');
+        this.errorMsg.set(err?.error?.error || 'No se ha podido eliminar la factura.');
         this.deleting.set(false);
       }
     });
   }
 
-  // ================== UTILIDADES ==================
+  descargarPdf(factura: Factura): void {
+    this.downloadingPdfId.set(factura.id);
+    this.facturaService.descargarPdf(factura.id).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = `${factura.invoiceNumber || 'factura'}.pdf`;
+        anchor.click();
+        URL.revokeObjectURL(url);
+        this.downloadingPdfId.set(null);
+      },
+      error: (err) => {
+        console.error('Error al descargar PDF:', err);
+        this.errorMsg.set('No se ha podido descargar el PDF.');
+        this.downloadingPdfId.set(null);
+      }
+    });
+  }
+
   badgeClass(estado: string): Record<string, boolean> {
     return {
       badge: true,

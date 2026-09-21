@@ -22,16 +22,16 @@ export class Home implements OnInit {
     const ahora = new Date();
     return this.facturas()
       .filter(f => {
-        const fecha = new Date(f.fecha_factura);
+        const fecha = new Date(f.invoiceDate);
         return f.estado === 'Pagada'
           && fecha.getMonth() === ahora.getMonth()
           && fecha.getFullYear() === ahora.getFullYear();
       })
-      .reduce((total, f) => total + f.importe, 0);
+      .reduce((total, f) => total + f.total, 0);
   });
 
   clientesActivos = computed(() =>
-    new Set(this.facturas().map(f => f.cliente)).size
+    new Set(this.facturas().map(f => f.customerName)).size
   );
 
   constructor(private router: Router, private facturaService: FacturaService) { }

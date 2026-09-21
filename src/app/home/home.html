@@ -30,10 +30,10 @@
     <tbody>
       @for (item of facturas(); track item.id) {
         <tr (dblclick)="irADetalle(item.id)" class="fila-clicable">
-          <td>{{ item.num_factura }}</td>
-          <td>{{ item.cliente }}</td>
-          <td>{{ item.fecha_factura | date:'dd/MM/yyyy' }}</td>
-          <td>{{ item.importe }} €</td>
+          <td>{{ item.invoiceNumber }}</td>
+          <td>{{ item.customerName }}</td>
+          <td>{{ item.invoiceDate | date:'dd/MM/yyyy' }}</td>
+          <td>{{ item.total }} €</td>
           <td>
             <span class="badge" [class.paid]="item.estado === 'Pagada'" [class.pending]="item.estado === 'Pendiente'">
               {{ item.estado }}

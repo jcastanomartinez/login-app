@@ -1,12 +1,6 @@
 <div class="page-header">
   <h1>Facturas</h1>
-  <button class="btn btn-primary" (click)="openAddModal()">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <line x1="12" y1="5" x2="12" y2="19"></line>
-      <line x1="5" y1="12" x2="19" y2="12"></line>
-    </svg>
-    Nueva factura
-  </button>
+  <button class="btn btn-primary" (click)="openAddModal()">+ Nueva factura</button>
 </div>
 
 @if (errorMsg()) {
@@ -20,33 +14,25 @@
         <th>Nº Factura</th>
         <th>Cliente</th>
         <th>Fecha</th>
-        <th>Importe</th>
+        <th>Total</th>
         <th>Estado</th>
         <th class="col-actions">Acciones</th>
       </tr>
     </thead>
     <tbody>
       @for (factura of facturas(); track factura.id) {
-
         @if (editingId() === factura.id && editBuffer(); as buffer) {
-          <!-- ===== FILA EN MODO EDICIÓN ===== -->
           <tr class="fila-editando">
+            <td>{{ buffer.invoiceNumber }}</td>
             <td>
-              <input class="cell-input" type="text" [ngModel]="buffer.num_factura"
-                     (ngModelChange)="updateBufferField('num_factura', $event)" />
+              <input class="cell-input" type="text" [ngModel]="buffer.customerName"
+                     (ngModelChange)="updateBufferField('customerName', $event)" />
             </td>
             <td>
-              <input class="cell-input" type="text" [ngModel]="buffer.cliente"
-                     (ngModelChange)="updateBufferField('cliente', $event)" />
+              <input class="cell-input" type="date" [ngModel]="dateForInput(buffer.invoiceDate)"
+                     (ngModelChange)="updateBufferField('invoiceDate', $event)" />
             </td>
-            <td>
-              <input class="cell-input" type="date" [ngModel]="dateForInput(buffer.fecha_factura)"
-                     (ngModelChange)="updateBufferField('fecha_factura', $event)" />
-            </td>
-            <td>
-              <input class="cell-input" type="number" [ngModel]="buffer.importe"
-                     (ngModelChange)="updateBufferField('importe', $event)" />
-            </td>
+            <td>{{ buffer.total | number:'1.2-2' }} €</td>
             <td>
               <select class="cell-input" [ngModel]="buffer.estado"
                       (ngModelChange)="updateBufferField('estado', $event)">
@@ -56,50 +42,26 @@
               </select>
             </td>
             <td class="col-actions">
-              <button class="icon-btn icon-btn-success" title="Guardar" [disabled]="savingEdit()" (click)="saveEdit()">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-              </button>
-              <button class="icon-btn icon-btn-muted" title="Cancelar" [disabled]="savingEdit()" (click)="cancelEdit()">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
+              <button class="icon-btn icon-btn-success" title="Guardar" [disabled]="savingEdit()" (click)="saveEdit()">✓</button>
+              <button class="icon-btn icon-btn-muted" title="Cancelar" [disabled]="savingEdit()" (click)="cancelEdit()">×</button>
             </td>
           </tr>
-
         } @else {
-          <!-- ===== FILA NORMAL ===== -->
           <tr (dblclick)="startEdit(factura)" class="fila-clicable">
-            <td>{{ factura.num_factura }}</td>
-            <td>{{ factura.cliente }}</td>
-            <td>{{ factura.fecha_factura | date:'dd/MM/yyyy' }}</td>
-            <td>{{ factura.importe }} €</td>
-            <td>
-              <span [ngClass]="badgeClass(factura.estado)">{{ factura.estado }}</span>
-            </td>
+            <td>{{ factura.invoiceNumber }}</td>
+            <td>{{ factura.customerName }}</td>
+            <td>{{ factura.invoiceDate | date:'dd/MM/yyyy' }}</td>
+            <td>{{ factura.total | number:'1.2-2' }} €</td>
+            <td><span [ngClass]="badgeClass(factura.estado)">{{ factura.estado }}</span></td>
             <td class="col-actions">
-              <button class="icon-btn" title="Editar" (click)="startEdit(factura)">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 20h9"></path>
-                  <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-                </svg>
+              <button class="icon-btn" title="Editar" (click)="startEdit(factura)">✎</button>
+              <button class="icon-btn" title="Descargar PDF" [disabled]="downloadingPdfId() === factura.id" (click)="descargarPdf(factura)">
+                {{ downloadingPdfId() === factura.id ? '…' : 'PDF' }}
               </button>
-              <button class="icon-btn icon-btn-danger" title="Eliminar" (click)="askDelete(factura)">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="3 6 5 6 21 6"></polyline>
-                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
-                  <path d="M10 11v6"></path>
-                  <path d="M14 11v6"></path>
-                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
-                </svg>
-              </button>
+              <button class="icon-btn icon-btn-danger" title="Eliminar" (click)="askDelete(factura)">🗑</button>
             </td>
           </tr>
         }
-
       } @empty {
         <tr><td colspan="6" class="empty-row">No hay facturas todavía.</td></tr>
       }
@@ -107,56 +69,76 @@
   </table>
 </div>
 
-
-<!-- ============== MODAL: NUEVA FACTURA ============== -->
 @if (showAddModal()) {
   <div class="modal-backdrop" (click)="closeAddModal()">
     <div class="modal" (click)="$event.stopPropagation()">
-      <button class="modal-close" type="button" aria-label="Cerrar" (click)="closeAddModal()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-
+      <button class="modal-close" type="button" aria-label="Cerrar" (click)="closeAddModal()">×</button>
       <div class="modal-header">
         <img src="/images/iconoFactApp.jpg" alt="" class="modal-icon" />
         <h2>Nueva factura</h2>
       </div>
 
-      <label>
-        Nº Factura
-        <input type="text" [ngModel]="newFactura().num_factura"
-               (ngModelChange)="newFactura.set({ ...newFactura(), num_factura: $event })" />
+      <h3>Factura</h3>
+      <label>Nº Factura
+        <input type="text" [ngModel]="newFactura().invoiceNumber"
+               (ngModelChange)="updateNewField('invoiceNumber', $event)" />
       </label>
-
-      <label>
-        Cliente
-        <input type="text" [ngModel]="newFactura().cliente"
-               (ngModelChange)="newFactura.set({ ...newFactura(), cliente: $event })" />
+      <label>Fecha
+        <input type="date" [ngModel]="newFactura().invoiceDate"
+               (ngModelChange)="updateNewField('invoiceDate', $event)" />
       </label>
-
-      <label>
-        Fecha
-        <input type="date" [ngModel]="newFactura().fecha_factura"
-               (ngModelChange)="newFactura.set({ ...newFactura(), fecha_factura: $event })" />
-      </label>
-
-      <label>
-        Importe (€)
-        <input type="number" [ngModel]="newFactura().importe"
-               (ngModelChange)="newFactura.set({ ...newFactura(), importe: $event })" />
-      </label>
-
-      <label>
-        Estado
-        <select [ngModel]="newFactura().estado"
-                (ngModelChange)="newFactura.set({ ...newFactura(), estado: $event })">
-          @for (estado of estados; track estado) {
-            <option [value]="estado">{{ estado }}</option>
-          }
+      <label>Estado
+        <select [ngModel]="newFactura().estado" (ngModelChange)="updateNewField('estado', $event)">
+          @for (estado of estados; track estado) { <option [value]="estado">{{ estado }}</option> }
         </select>
       </label>
+
+      <h3>Emisor</h3>
+      <label>Empresa
+        <input type="text" [ngModel]="newFactura().companyName" (ngModelChange)="updateNewField('companyName', $event)" />
+      </label>
+      <label>CIF
+        <input type="text" [ngModel]="newFactura().companyTaxId" (ngModelChange)="updateNewField('companyTaxId', $event)" />
+      </label>
+      <label>Dirección
+        <input type="text" [ngModel]="newFactura().companyAddress" (ngModelChange)="updateNewField('companyAddress', $event)" />
+      </label>
+      <label>Email
+        <input type="email" [ngModel]="newFactura().companyEmail" (ngModelChange)="updateNewField('companyEmail', $event)" />
+      </label>
+
+      <h3>Cliente</h3>
+      <label>Nombre / Empresa
+        <input type="text" [ngModel]="newFactura().customerName" (ngModelChange)="updateNewField('customerName', $event)" />
+      </label>
+      <label>CIF / NIF
+        <input type="text" [ngModel]="newFactura().customerTaxId" (ngModelChange)="updateNewField('customerTaxId', $event)" />
+      </label>
+      <label>Dirección
+        <input type="text" [ngModel]="newFactura().customerAddress" (ngModelChange)="updateNewField('customerAddress', $event)" />
+      </label>
+
+      <h3>Líneas</h3>
+      @for (item of newFactura().items; track $index; let i = $index) {
+        <div class="invoice-item-row">
+          <label>Descripción
+            <input type="text" [ngModel]="item.description" (ngModelChange)="updateNewItem(i, 'description', $event)" />
+          </label>
+          <label>Cantidad
+            <input type="number" min="0.01" step="0.01" [ngModel]="item.quantity" (ngModelChange)="updateNewItem(i, 'quantity', +$event)" />
+          </label>
+          <label>Precio
+            <input type="number" min="0" step="0.01" [ngModel]="item.unitPrice" (ngModelChange)="updateNewItem(i, 'unitPrice', +$event)" />
+          </label>
+          <label>IVA %
+            <input type="number" min="0" step="0.01" [ngModel]="item.tax" (ngModelChange)="updateNewItem(i, 'tax', +$event)" />
+          </label>
+          <button type="button" class="icon-btn icon-btn-danger" (click)="removeItem(i)" [disabled]="newFactura().items.length <= 1">×</button>
+        </div>
+      }
+      <button type="button" class="btn btn-secondary" (click)="addItem()">+ Añadir línea</button>
+
+      <p class="totals-info">Los totales se calculan automáticamente en el servidor.</p>
 
       <div class="modal-actions">
         <button class="btn btn-secondary" [disabled]="savingNew()" (click)="closeAddModal()">Cancelar</button>
@@ -168,38 +150,15 @@
   </div>
 }
 
-
-<!-- ============== MODAL: CONFIRMAR ELIMINACIÓN ============== -->
 @if (facturaToDelete(); as target) {
   <div class="modal-backdrop" (click)="cancelDelete()">
     <div class="modal modal-small" (click)="$event.stopPropagation()">
-      <button class="modal-close" type="button" aria-label="Cerrar" (click)="cancelDelete()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-
-      <div class="modal-header">
-        <div class="modal-icon modal-icon-warning">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path>
-            <line x1="12" y1="9" x2="12" y2="13"></line>
-            <line x1="12" y1="17" x2="12.01" y2="17"></line>
-          </svg>
-        </div>
-        <h2>Eliminar factura</h2>
-      </div>
-      <p>
-        ¿Seguro que quieres eliminar la factura
-        <strong>{{ target.num_factura }}</strong> de <strong>{{ target.cliente }}</strong>?
-        Esta acción no se puede deshacer.
-      </p>
+      <button class="modal-close" type="button" aria-label="Cerrar" (click)="cancelDelete()">×</button>
+      <div class="modal-header"><h2>Eliminar factura</h2></div>
+      <p>¿Seguro que quieres eliminar la factura <strong>{{ target.invoiceNumber }}</strong> de <strong>{{ target.customerName }}</strong>?</p>
       <div class="modal-actions">
         <button class="btn btn-secondary" [disabled]="deleting()" (click)="cancelDelete()">Cancelar</button>
-        <button class="btn btn-danger" [disabled]="deleting()" (click)="confirmDelete()">
-          {{ deleting() ? 'Eliminando...' : 'Eliminar' }}
-        </button>
+        <button class="btn btn-danger" [disabled]="deleting()" (click)="confirmDelete()">{{ deleting() ? 'Eliminando...' : 'Eliminar' }}</button>
       </div>
     </div>
   </div>

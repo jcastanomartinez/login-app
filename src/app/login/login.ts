@@ -38,8 +38,8 @@ export class Login {
           },
           error: (err) => {
             this.notificationService.mostrarError('Credenciales inválidas.');
-            //this.errorLogin=err.message;
-            //console.log(err);           
+            this.errorLogin=err.message;
+            console.log(err);           
           }
         });
 

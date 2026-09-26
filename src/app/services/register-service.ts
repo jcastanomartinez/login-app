@@ -23,6 +23,6 @@ export class Register {
   constructor(private http: HttpClient) {}
 
   register(request: RegisterRequest): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`${environment.apiUrl}/user/register`, request);
+    return this.http.post<RegisterResponse>(`${environment.apiUrl}/auth/register`, request);
   }
 }

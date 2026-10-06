@@ -43,7 +43,5 @@ export class Home implements OnInit {
     });
   }
 
-  irADetalle(id: number) {
-    this.router.navigate(['/facturas', id]);
-  }
+
 }

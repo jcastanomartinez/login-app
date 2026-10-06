@@ -48,7 +48,8 @@
         </td>
       </tr>
       } @else {
-      <tr (dblclick)="startEdit(factura)" class="fila-clicable">
+      <!--<tr (dblclick)="startEdit(factura)" class="fila-clicable">-->
+        <tr (dblclick)="irADetalle(factura.id)" class="fila-clicable">                
         <td>{{ factura.invoiceNumber }}</td>
         <td>{{ factura.customerName }}</td>
         <td>{{ factura.invoiceDate | date:'dd/MM/yyyy' }}</td>

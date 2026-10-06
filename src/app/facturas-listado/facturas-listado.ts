@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FacturaService } from '../services/facturaService';
 import { Factura, FacturaDraft, FacturaItem } from '../models/Factura';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-facturas-listado',
@@ -28,10 +29,14 @@ export class FacturasListado implements OnInit {
   downloadingPdfId = signal<number | null>(null);
   errorMsg = signal<string | null>(null);
 
-  constructor(private facturaService: FacturaService) {}
+  constructor(private facturaService: FacturaService, private router: Router) {}
 
   ngOnInit(): void {
     this.cargarFacturas();
+  }
+
+  irADetalle(id: number) {
+    this.router.navigate(['/facturas', id]);
   }
 
   private cargarFacturas(): void {

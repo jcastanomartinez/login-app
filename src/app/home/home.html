@@ -29,7 +29,7 @@
     </thead>
     <tbody>
       @for (item of facturas(); track item.id) {
-        <tr (dblclick)="irADetalle(item.id)" class="fila-clicable">
+        <tr>
           <td>{{ item.invoiceNumber }}</td>
           <td>{{ item.customerName }}</td>
           <td>{{ item.invoiceDate | date:'dd/MM/yyyy' }}</td>

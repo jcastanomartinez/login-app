@@ -1,3 +1,4 @@
+import {environment} from '../../environments/environment'
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -11,18 +12,18 @@ export class ClienteService {
   private apiUrl = 'http://localhost:8080';
 
   getClientes(): Observable<Cliente[]> {
-    return this.http.get<Cliente[]>(`${this.apiUrl}/clientes`);
+    return this.http.get<Cliente[]>(`${environment.apiUrl}/clientes`);
   }
 
   crearCliente(cliente: ClienteDraft): Observable<Cliente> {
-    return this.http.post<Cliente>(`${this.apiUrl}/clientes`, cliente);
+    return this.http.post<Cliente>(`${environment.apiUrl}/clientes`, cliente);
   }
 
   actualizarCliente(cliente: Cliente): Observable<Cliente> {
-    return this.http.put<Cliente>(`${this.apiUrl}/clientes/${cliente.id}`, cliente);
+    return this.http.put<Cliente>(`${environment.apiUrl}/clientes/${cliente.id}`, cliente);
   }
 
   eliminarCliente(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/clientes/${id}`);
+    return this.http.delete<void>(`${environment.apiUrl}/clientes/${id}`);
   }
 }

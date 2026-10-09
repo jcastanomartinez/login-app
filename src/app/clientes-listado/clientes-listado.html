@@ -1,0 +1,118 @@
+<div class="page-header">
+  <h1>Clientes</h1>
+  <button class="btn btn-primary" (click)="openCreate()">+ Nuevo cliente</button>
+</div>
+
+@if (errorMsg()) {
+<div class="error-banner">{{ errorMsg() }}</div>
+}
+
+<div class="invoices-table">
+  <div class="toolbar">
+    <input class="search-input" type="search" placeholder="Buscar por nombre, CIF/NIF o email…"
+      [ngModel]="search()" (ngModelChange)="search.set($event)" />
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>CIF / NIF</th>
+        <th>Email</th>
+        <th>Teléfono</th>
+        <th>Dirección</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @if (loading()) {
+      <tr><td colspan="6" class="empty-row">Cargando clientes…</td></tr>
+      } @else {
+      @for (c of filtered(); track c.id) {
+      <tr class="fila-clicable" (dblclick)="openEdit(c)">
+        <td>{{ c.name }}</td>
+        <td>{{ c.taxId }}</td>
+        <td>{{ c.email }}</td>
+        <td>{{ c.phone }}</td>
+        <td>{{ c.address }}</td>
+        <td>
+          <div class="row-actions">
+            <button class="icon-btn" title="Editar" aria-label="Editar cliente" (click)="openEdit(c)">✎</button>
+            <button class="icon-btn icon-btn-danger" title="Eliminar" aria-label="Eliminar cliente"
+              (click)="askDelete(c)">🗑</button>
+          </div>
+        </td>
+      </tr>
+      } @empty {
+      <tr>
+        <td colspan="6" class="empty-row">
+          {{ search() ? 'No hay clientes que coincidan con la búsqueda.' : 'No hay clientes todavía.' }}
+        </td>
+      </tr>
+      }
+      }
+    </tbody>
+  </table>
+</div>
+
+@if (showModal()) {
+<div class="modal-backdrop" (click)="closeModal()">
+  <div class="modal modal-medium" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+    <button class="modal-close" type="button" aria-label="Cerrar" (click)="closeModal()">×</button>
+
+    <div class="modal-header">
+      <h2>{{ editingId() === null ? 'Nuevo cliente' : 'Editar cliente' }}</h2>
+    </div>
+
+    <label>Nombre / Empresa *
+      <input type="text" [ngModel]="form().name" (ngModelChange)="updateField('name', $event)" />
+    </label>
+
+    <div class="form-grid-2">
+      <label>CIF / NIF *
+        <input type="text" [ngModel]="form().taxId" (ngModelChange)="updateField('taxId', $event)" />
+      </label>
+      <label>Teléfono
+        <input type="tel" [ngModel]="form().phone" (ngModelChange)="updateField('phone', $event)" />
+      </label>
+    </div>
+
+    <label>Email
+      <input type="email" [ngModel]="form().email" (ngModelChange)="updateField('email', $event)" />
+    </label>
+
+    <label>Dirección
+      <input type="text" [ngModel]="form().address" (ngModelChange)="updateField('address', $event)" />
+    </label>
+
+    @if (formError()) {
+    <div class="form-error" role="alert">{{ formError() }}</div>
+    }
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" [disabled]="saving()" (click)="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" [disabled]="saving()" (click)="save()">
+        {{ saving() ? 'Guardando...' : 'Guardar' }}
+      </button>
+    </div>
+  </div>
+</div>
+}
+
+@if (clienteToDelete(); as target) {
+<div class="modal-backdrop" (click)="cancelDelete()">
+  <div class="modal modal-small" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+    <button class="modal-close" type="button" aria-label="Cerrar" (click)="cancelDelete()">×</button>
+    <div class="modal-header">
+      <h2>Eliminar cliente</h2>
+    </div>
+    <p>¿Seguro que quieres eliminar a <strong>{{ target.name }}</strong> ({{ target.taxId }})?</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" [disabled]="deleting()" (click)="cancelDelete()">Cancelar</button>
+      <button class="btn btn-danger" [disabled]="deleting()" (click)="confirmDelete()">
+        {{ deleting() ? 'Eliminando...' : 'Eliminar' }}
+      </button>
+    </div>
+  </div>
+</div>
+}

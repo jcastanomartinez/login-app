@@ -131,36 +131,7 @@ export class FacturasListado implements OnInit {
     });
   }
 
-  startEdit(factura: Factura): void {
-    this.editingId.set(factura.id);
-    this.editBuffer.set({ ...factura, items: factura.items.map(item => ({ ...item })) });
-    this.errorMsg.set(null);
-  }
-
-  cancelEdit(): void {
-    this.editingId.set(null);
-    this.editBuffer.set(null);
-  }
-
-  saveEdit(): void {
-    const buffer = this.editBuffer();
-    if (!buffer) return;
-
-    this.savingEdit.set(true);
-    this.facturaService.actualizarFactura(buffer).subscribe({
-      next: (actualizada) => {
-        this.facturas.update(list => list.map(f => f.id === actualizada.id ? actualizada : f));
-        this.savingEdit.set(false);
-        this.cancelEdit();
-      },
-      error: (err) => {
-        console.error('Error al actualizar factura:', err);
-        this.errorMsg.set(err?.error?.error || 'No se ha podido guardar el cambio.');
-        this.savingEdit.set(false);
-      }
-    });
-  }
-
+  
   updateBufferField<K extends keyof Factura>(field: K, value: Factura[K]): void {
     const buffer = this.editBuffer();
     if (!buffer) return;

@@ -41,10 +41,7 @@
           </select>
         </td>
         <td class="col-actions">
-          <button class="icon-btn icon-btn-success" title="Guardar" [disabled]="savingEdit()"
-            (click)="saveEdit()">✓</button>
-          <button class="icon-btn icon-btn-muted" title="Cancelar" [disabled]="savingEdit()"
-            (click)="cancelEdit()">×</button>
+        
         </td>
       </tr>
       } @else {
@@ -55,8 +52,7 @@
         <td>{{ factura.invoiceDate | date:'dd/MM/yyyy' }}</td>
         <td>{{ factura.total | number:'1.2-2' }} €</td>
         <td><span [ngClass]="badgeClass(factura.estado)">{{ factura.estado }}</span></td>
-        <td class="col-actions">
-          <button class="icon-btn" title="Editar" (click)="startEdit(factura)">✎</button>
+        <td class="col-actions">          
           <button class="icon-btn" title="Descargar PDF" aria-label="Descargar PDF"
             [disabled]="downloadingPdfId() === factura.id" (click)="descargarPdf(factura)">
             @if (downloadingPdfId() === factura.id) {
@@ -64,11 +60,7 @@
             } @else {
             <img src="images/pdfIcon.png" alt="" class="icon-btn-img" />
             }
-          </button>
-          <!--<button class="icon-btn" title="Descargar PDF" [disabled]="downloadingPdfId() === factura.id"
-            (click)="descargarPdf(factura)">
-            {{ downloadingPdfId() === factura.id ? '…' : 'PDF' }}
-          </button>-->
+          </button>          
           <button class="icon-btn icon-btn-danger" title="Eliminar" (click)="askDelete(factura)">🗑</button>
         </td>
       </tr>
@@ -84,83 +76,104 @@
 
 @if (showAddModal()) {
 <div class="modal-backdrop" (click)="closeAddModal()">
-  <div class="modal" (click)="$event.stopPropagation()">
+  <div class="modal modal-large" (click)="$event.stopPropagation()">
     <button class="modal-close" type="button" aria-label="Cerrar" (click)="closeAddModal()">×</button>
+
     <div class="modal-header">
       <img src="/images/iconoFactApp.jpg" alt="" class="modal-icon" />
       <h2>Nueva factura</h2>
     </div>
 
-    <h3>Factura</h3>
-    <label>Nº Factura
-      <input type="text" [ngModel]="newFactura().invoiceNumber"
-        (ngModelChange)="updateNewField('invoiceNumber', $event)" />
-    </label>
-    <label>Fecha
-      <input type="date" [ngModel]="newFactura().invoiceDate" (ngModelChange)="updateNewField('invoiceDate', $event)" />
-    </label>
-    <label>Estado
-      <select [ngModel]="newFactura().estado" (ngModelChange)="updateNewField('estado', $event)">
-        @for (estado of estados; track estado) { <option [value]="estado">{{ estado }}</option> }
-      </select>
-    </label>
+    <div class="modal-body">
+      <section>
+        <h3>Factura</h3>
+        <div class="form-grid-3">
+          <label>Nº Factura
+            <input type="text" [ngModel]="newFactura().invoiceNumber"
+              (ngModelChange)="updateNewField('invoiceNumber', $event)" />
+          </label>
+          <label>Fecha
+            <input type="date" [ngModel]="newFactura().invoiceDate"
+              (ngModelChange)="updateNewField('invoiceDate', $event)" />
+          </label>
+          <label>Estado
+            <select [ngModel]="newFactura().estado" (ngModelChange)="updateNewField('estado', $event)">
+              @for (estado of estados; track estado) { <option [value]="estado">{{ estado }}</option> }
+            </select>
+          </label>
+        </div>
+      </section>
 
-    <h3>Emisor</h3>
-    <label>Empresa
-      <input type="text" [ngModel]="newFactura().companyName" (ngModelChange)="updateNewField('companyName', $event)" />
-    </label>
-    <label>CIF
-      <input type="text" [ngModel]="newFactura().companyTaxId"
-        (ngModelChange)="updateNewField('companyTaxId', $event)" />
-    </label>
-    <label>Dirección
-      <input type="text" [ngModel]="newFactura().companyAddress"
-        (ngModelChange)="updateNewField('companyAddress', $event)" />
-    </label>
-    <label>Email
-      <input type="email" [ngModel]="newFactura().companyEmail"
-        (ngModelChange)="updateNewField('companyEmail', $event)" />
-    </label>
+      <div class="form-grid-2">
+        <section>
+          <h3>Emisor</h3>
+          <div class="form-stack">
+            <label>Empresa
+              <input type="text" [ngModel]="newFactura().companyName"
+                (ngModelChange)="updateNewField('companyName', $event)" />
+            </label>
+            <label>CIF
+              <input type="text" [ngModel]="newFactura().companyTaxId"
+                (ngModelChange)="updateNewField('companyTaxId', $event)" />
+            </label>
+            <label>Dirección
+              <input type="text" [ngModel]="newFactura().companyAddress"
+                (ngModelChange)="updateNewField('companyAddress', $event)" />
+            </label>
+            <label>Email
+              <input type="email" [ngModel]="newFactura().companyEmail"
+                (ngModelChange)="updateNewField('companyEmail', $event)" />
+            </label>
+          </div>
+        </section>
 
-    <h3>Cliente</h3>
-    <label>Nombre / Empresa
-      <input type="text" [ngModel]="newFactura().customerName"
-        (ngModelChange)="updateNewField('customerName', $event)" />
-    </label>
-    <label>CIF / NIF
-      <input type="text" [ngModel]="newFactura().customerTaxId"
-        (ngModelChange)="updateNewField('customerTaxId', $event)" />
-    </label>
-    <label>Dirección
-      <input type="text" [ngModel]="newFactura().customerAddress"
-        (ngModelChange)="updateNewField('customerAddress', $event)" />
-    </label>
+        <section>
+          <h3>Cliente</h3>
+          <div class="form-stack">
+            <label>Nombre / Empresa
+              <input type="text" [ngModel]="newFactura().customerName"
+                (ngModelChange)="updateNewField('customerName', $event)" />
+            </label>
+            <label>CIF / NIF
+              <input type="text" [ngModel]="newFactura().customerTaxId"
+                (ngModelChange)="updateNewField('customerTaxId', $event)" />
+            </label>
+            <label>Dirección
+              <input type="text" [ngModel]="newFactura().customerAddress"
+                (ngModelChange)="updateNewField('customerAddress', $event)" />
+            </label>
+          </div>
+        </section>
+      </div>
 
-    <h3>Líneas</h3>
-    @for (item of newFactura().items; track $index; let i = $index) {
-    <div class="invoice-item-row">
-      <label>Descripción
-        <input type="text" [ngModel]="item.description" (ngModelChange)="updateNewItem(i, 'description', $event)" />
-      </label>
-      <label>Cantidad
-        <input type="number" min="0.01" step="0.01" [ngModel]="item.quantity"
-          (ngModelChange)="updateNewItem(i, 'quantity', +$event)" />
-      </label>
-      <label>Precio
-        <input type="number" min="0" step="0.01" [ngModel]="item.unitPrice"
-          (ngModelChange)="updateNewItem(i, 'unitPrice', +$event)" />
-      </label>
-      <label>IVA %
-        <input type="number" min="0" step="0.01" [ngModel]="item.tax"
-          (ngModelChange)="updateNewItem(i, 'tax', +$event)" />
-      </label>
-      <button type="button" class="icon-btn icon-btn-danger" (click)="removeItem(i)"
-        [disabled]="newFactura().items.length <= 1">×</button>
+      <section>
+        <div class="section-head">
+          <h3>Líneas</h3>
+          <button type="button" class="btn btn-secondary btn-sm" (click)="addItem()">+ Añadir línea</button>
+        </div>
+
+        <div class="invoice-item-row invoice-item-head">
+          <span>Descripción</span><span>Cantidad</span><span>Precio</span><span>IVA %</span><span></span>
+        </div>
+
+        @for (item of newFactura().items; track $index; let i = $index) {
+        <div class="invoice-item-row">
+          <input type="text" aria-label="Descripción" [ngModel]="item.description"
+            (ngModelChange)="updateNewItem(i, 'description', $event)" />
+          <input type="number" aria-label="Cantidad" min="0.01" step="0.01" [ngModel]="item.quantity"
+            (ngModelChange)="updateNewItem(i, 'quantity', +$event)" />
+          <input type="number" aria-label="Precio" min="0" step="0.01" [ngModel]="item.unitPrice"
+            (ngModelChange)="updateNewItem(i, 'unitPrice', +$event)" />
+          <input type="number" aria-label="IVA %" min="0" step="0.01" [ngModel]="item.tax"
+            (ngModelChange)="updateNewItem(i, 'tax', +$event)" />
+          <button type="button" class="icon-btn icon-btn-danger" aria-label="Eliminar línea"
+            (click)="removeItem(i)" [disabled]="newFactura().items.length <= 1">×</button>
+        </div>
+        }
+
+        <p class="totals-info">Los totales se calculan automáticamente en el servidor.</p>
+      </section>
     </div>
-    }
-    <button type="button" class="btn btn-secondary" (click)="addItem()">+ Añadir línea</button>
-
-    <p class="totals-info">Los totales se calculan automáticamente en el servidor.</p>
 
     <div class="modal-actions">
       <button class="btn btn-secondary" [disabled]="savingNew()" (click)="closeAddModal()">Cancelar</button>

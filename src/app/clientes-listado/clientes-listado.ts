@@ -4,12 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { ClienteService } from '../services/clienteService'; // AJUSTAR rutas
 import { Cliente, ClienteDraft } from '../models/Cliente';
 
-const EMPTY_CLIENTE: ClienteDraft = {
-  name: '',
+const EMPTY_CLIENTE: ClienteDraft = {  
+  nombre: '',
+  apellidos: '',
   taxId: '',
-  address: '',
   email: '',
-  phone: '',
+  telefono: '',
+  direccion: '',
+  creadoEn: '',
+  actualizadoEn: ''
 };
 
 @Component({
@@ -22,6 +25,8 @@ const EMPTY_CLIENTE: ClienteDraft = {
 export class ClientesListado implements OnInit {
   private service = inject(ClienteService);
 
+  constructor(private clienteService: ClienteService) {}
+
   clientes = signal<Cliente[]>([]);
   loading = signal(true);
   errorMsg = signal('');
@@ -30,12 +35,11 @@ export class ClientesListado implements OnInit {
   // Lista filtrada y ordenada por nombre
   filtered = computed(() => {
     const term = this.search().trim().toLowerCase();
-    const list = [...this.clientes()].sort((a, b) => a.name.localeCompare(b.name));
+    const list = [...this.clientes()].sort((a, b) => a.nombre.localeCompare(b.nombre));
     if (!term) return list;
     return list.filter(
       (c) =>
-        c.name.toLowerCase().includes(term) ||
-        c.taxId.toLowerCase().includes(term) ||
+        c.nombre.toLowerCase().includes(term) ||        
         (c.email ?? '').toLowerCase().includes(term),
     );
   });
@@ -53,6 +57,17 @@ export class ClientesListado implements OnInit {
 
   ngOnInit() {
     this.cargar();
+  }
+
+  
+  private cargarClientes(): void {
+    this.clienteService.getClientes().subscribe({
+      next: (data: any) => this.clientes.set(data),
+      error: (err) => {
+        console.error('Error al cargar facturas:', err);
+        this.errorMsg.set('No se han podido cargar las facturas.');
+      }
+    });
   }
 
   cargar() {
@@ -82,11 +97,14 @@ export class ClientesListado implements OnInit {
   openEdit(c: Cliente) {
     this.editingId.set(c.id);
     this.form.set({
-      name: c.name ?? '',
+      nombre: c.nombre ?? '',
+      direccion: c.direccion ?? '',
+      actualizadoEn: c.actualizadoEn ?? '',
+      apellidos: c.apellidos ?? '',
+      creadoEn: c.creadoEn ?? '',
       taxId: c.taxId ?? '',
-      address: c.address ?? '',
       email: c.email ?? '',
-      phone: c.phone ?? '',
+      telefono: c.telefono ?? ''      
     });
     this.formError.set('');
     this.showModal.set(true);
@@ -103,8 +121,7 @@ export class ClientesListado implements OnInit {
 
   private validate(): string {
     const f = this.form();
-    if (!f.name.trim()) return 'El nombre es obligatorio.';
-    if (!f.taxId.trim()) return 'El CIF/NIF es obligatorio.';
+    if (!f.nombre.trim()) return 'El nombre es obligatorio.';    
     if (f.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email.trim())) {
       return 'El email no es válido.';
     }
@@ -120,11 +137,14 @@ export class ClientesListado implements OnInit {
 
     const f = this.form();
     const draft: ClienteDraft = {
-      name: f.name.trim(),
-      taxId: f.taxId.trim().toUpperCase(),
-      address: f.address.trim(),
+      nombre: f.nombre.trim(),      
+      direccion: f.direccion.trim(),
+      actualizadoEn: f.actualizadoEn.trim(),
+      apellidos: f.apellidos.trim(),
+      taxId: f.taxId.trim(),
+      creadoEn: f.creadoEn.trim(),      
       email: f.email.trim(),
-      phone: f.phone.trim(),
+      telefono: f.telefono.trim()
     };
 
     const id = this.editingId();

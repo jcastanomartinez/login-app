@@ -1,10 +1,13 @@
 export interface Cliente {
   id: number;
-  name: string;
-  taxId: string;
-  address: string;
+  taxId: string,
+  nombre: string;
+  apellidos: string;
   email: string;
-  phone: string;
+  telefono: string;
+  direccion: string;
+  creadoEn: string;
+  actualizadoEn: string;     
 }
 
 export type ClienteDraft = Omit<Cliente, 'id'>;

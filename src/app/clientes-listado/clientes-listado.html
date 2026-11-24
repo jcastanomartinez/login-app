@@ -30,11 +30,11 @@
       } @else {
       @for (c of filtered(); track c.id) {
       <tr class="fila-clicable" (dblclick)="openEdit(c)">
-        <td>{{ c.name }}</td>
+        <td>{{ c.nombre }}</td>
         <td>{{ c.taxId }}</td>
         <td>{{ c.email }}</td>
-        <td>{{ c.phone }}</td>
-        <td>{{ c.address }}</td>
+        <td>{{ c.telefono }}</td>
+        <td>{{ c.direccion }}</td>
         <td>
           <div class="row-actions">
             <button class="icon-btn" title="Editar" aria-label="Editar cliente" (click)="openEdit(c)">✎</button>
@@ -65,7 +65,7 @@
     </div>
 
     <label>Nombre / Empresa *
-      <input type="text" [ngModel]="form().name" (ngModelChange)="updateField('name', $event)" />
+      <input type="text" [ngModel]="form().nombre" (ngModelChange)="updateField('nombre', $event)" />
     </label>
 
     <div class="form-grid-2">
@@ -73,7 +73,7 @@
         <input type="text" [ngModel]="form().taxId" (ngModelChange)="updateField('taxId', $event)" />
       </label>
       <label>Teléfono
-        <input type="tel" [ngModel]="form().phone" (ngModelChange)="updateField('phone', $event)" />
+        <input type="tel" [ngModel]="form().telefono" (ngModelChange)="updateField('telefono', $event)" />
       </label>
     </div>
 
@@ -82,7 +82,7 @@
     </label>
 
     <label>Dirección
-      <input type="text" [ngModel]="form().address" (ngModelChange)="updateField('address', $event)" />
+      <input type="text" [ngModel]="form().direccion" (ngModelChange)="updateField('direccion', $event)" />
     </label>
 
     @if (formError()) {
@@ -106,7 +106,7 @@
     <div class="modal-header">
       <h2>Eliminar cliente</h2>
     </div>
-    <p>¿Seguro que quieres eliminar a <strong>{{ target.name }}</strong> ({{ target.taxId }})?</p>
+    <p>¿Seguro que quieres eliminar a <strong>{{ target.nombre }}</strong> ({{ target.taxId }})?</p>
     <div class="modal-actions">
       <button class="btn btn-secondary" [disabled]="deleting()" (click)="cancelDelete()">Cancelar</button>
       <button class="btn btn-danger" [disabled]="deleting()" (click)="confirmDelete()">

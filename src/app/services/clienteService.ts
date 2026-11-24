@@ -8,9 +8,7 @@ import { Cliente, ClienteDraft } from '../models/Cliente';
 export class ClienteService {
   private http = inject(HttpClient);
 
-  // AJUSTAR: misma apiUrl que uses en facturaService (api-gateway)
-  private apiUrl = 'http://localhost:8080';
-
+  
   getClientes(): Observable<Cliente[]> {
     return this.http.get<Cliente[]>(`${environment.apiUrl}/clientes`);
   }
